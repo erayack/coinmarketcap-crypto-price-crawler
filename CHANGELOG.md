@@ -1,14 +1,5 @@
 # CoinMarketCap Crypto Crawler Changelog
 
-## [Hide Menu Bar Command for Cleaner UX] - 2025-01-11
-
-- **IMPROVED: Command Visibility** - Hidden menu bar command from main command list
-  - Added `disabledByDefault: true` to Crypto Menu Bar command
-  - New users see clean command list with only Search and Watchlist
-  - Menu bar functionality requires manual enabling in Extension Preferences
-  - Clear instructions provided in command description
-  - No impact on existing users (applies only to new installations)
-
 ## [Improve Menu Bar UX with Preferences] - 2025-01-11
 
 - **IMPROVED: Menu Bar Configuration** - Converted to preference-based system for better UX

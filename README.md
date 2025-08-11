@@ -1,24 +1,41 @@
-# Raycast CoinMarketCap Crypto Crawler
+# Enhanced CoinMarketCap Crypto Crawler
 
-A Raycast plugin for getting the latest price of your favorite coins from [CoinMarketCap](https://coinmarketcap.com/).
+An enhanced version of the [original CoinMarketCap extension](https://www.raycast.com/SonicSpark/coinmarketcap-crypto-price-crawler) with live crypto price tracking capabilities.
 
-![Search Crypto Token](screenshots/Banner.png)
+## ✨ New Features
 
-## Basic Usage
+### 🎯 **Price Tracker Command**
+- Live crypto prices displayed directly in Raycast command subtitle
+- Auto-updates every 5 minutes
+- Select any crypto with `Cmd+Shift+T` to track
+- Format: `BTC $42,500 ↗ +2.5%`
 
-Just type the name of the coin you want to search for. There's no need to use api key as this extension is using crawler to get the latest price in real-time.
+### 📊 **Menu Bar Integration** 
+- Live crypto prices in system menu bar
+- Clean display: `BTC $42,500` with directional arrows
+- Detailed dropdown with full price information
+- Add cryptos with `Cmd+Shift+M` from Search or Watchlist
+- Auto-refresh every 2 minutes
 
-![Search Crypto Token](metadata/Search-Crypto-Token.png)
+### ⚙️ **Preference Controls**
+- **Show in Menu Bar** - Toggle menu bar display
+- **Menu Bar Refresh Interval** - Customize update frequency (1m, 2m, 5m)
 
-## Watchlist
+## 🚀 Quick Start
 
-You can also add your favorite coins to the watchlist by pressing `ctrl + shift + w` to track the price of your favorite coins. You can use the `watchlist` command to view the watchlist.
+1. **Search & Track**: Use Search or Watchlist as before
+2. **Command Subtitle**: Press `Cmd+Shift+T` on any crypto for live subtitle tracking  
+3. **Menu Bar**: Enable in Extension Preferences → Check "Show in Menu Bar"
+4. **Add to Menu Bar**: Press `Cmd+Shift+M` on any crypto to add to menu bar
 
-![Watchlist](metadata/Coin-Watchlist.png)
+## 🎨 Enhanced Experience
 
-## Calculate Token Value
+- Uppercase ticker symbols for consistency
+- Smart price formatting (removes excessive decimals)
+- Direction-aware trend indicators using real API data
+- Persistent storage for user preferences
+- Seamless integration with existing functionality
 
-You can also calculate the value of the coin you're searching for by the amount of coins you entered.
-Just open the action panel and select `Calculate Value`, or press `command + enter` to enter the calculation panel.
+---
 
-![Calculate Value](metadata/Currency-Converter.png)
+All original features (search, watchlist, currency converter) remain unchanged. These enhancements add live tracking capabilities similar to popular productivity extensions.
