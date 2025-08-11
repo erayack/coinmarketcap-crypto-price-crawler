@@ -43,10 +43,9 @@
       "name": "crypto-menu-bar",
       "title": "Crypto Menu Bar",
       "subtitle": "Live Crypto Prices",
-      "description": "Display live crypto prices in system menu bar. Enable this command in Extension Preferences, then check 'Show in Menu Bar' setting to activate.",
+      "description": "Show live crypto prices in menu bar (controlled by preferences)",
       "mode": "menu-bar",
-      "interval": "2m",
-      "disabledByDefault": true
+      "interval": "2m"
     }
   ],
   "preferences": [
