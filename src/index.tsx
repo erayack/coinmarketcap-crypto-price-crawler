@@ -1,4 +1,4 @@
-import { List } from "@raycast/api";
+import { List, showToast, Toast } from "@raycast/api";
 import React, { useState } from "react";
 import fuzzysort from "fuzzysort";
 import dayjs from "dayjs";
@@ -9,6 +9,8 @@ import useCoinWatchList from "./utils/useCoinWatchList";
 import { CryptoCurrency } from "./types";
 import CoinListItem from "./components/CoinListItem";
 import useCoinPriceStore from "./utils/useCoinPriceStore";
+import { setSelectedCoinForSubtitle } from "./utils/useSubtitleCrypto";
+import { addToMenuBar } from "./utils/useMenuBarCrypto";
 
 dayjs.extend(relativeTime);
 
@@ -28,7 +30,7 @@ export default function SearchCryptoList() {
     setIsLoading(true);
     const MAX_SEARCH_RESULT = 500;
     const fuzzyResult = fuzzysort.go(search, cryptoList, { keys: ["symbol", "name"] });
-    const transformedFuzzyResult = fuzzyResult.slice(0, MAX_SEARCH_RESULT - 1).map((result) => result.obj);
+    const transformedFuzzyResult = fuzzyResult.slice(0, MAX_SEARCH_RESULT - 1).map((result: any) => result.obj);
 
     setSearchResult(transformedFuzzyResult);
     setIsLoading(false);
@@ -40,6 +42,40 @@ export default function SearchCryptoList() {
     const [slug] = id.split("_");
 
     setSelectedSlug(slug);
+  };
+
+  const handleSetSubtitleCoin = async (coin: CryptoCurrency) => {
+    try {
+      await setSelectedCoinForSubtitle(coin);
+      await showToast({
+        style: Toast.Style.Success,
+        title: "Subtitle Tracker Set",
+        message: `${coin.name} will now appear in Price Tracker subtitle`,
+      });
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Error",
+        message: "Failed to set subtitle tracker",
+      });
+    }
+  };
+
+  const handleAddToMenuBar = async (coin: CryptoCurrency) => {
+    try {
+      await addToMenuBar(coin);
+      await showToast({
+        style: Toast.Style.Success,
+        title: "Added to Menu Bar",
+        message: `${coin.name} will now appear in menu bar dropdown`,
+      });
+    } catch (error) {
+      await showToast({
+        style: Toast.Style.Failure,
+        title: "Error",
+        message: "Failed to add to menu bar",
+      });
+    }
   };
 
   return (
@@ -55,8 +91,8 @@ export default function SearchCryptoList() {
       ) : (
         <List.Section title="Search results">
           {
-            searchResult.map(({ name, symbol, slug }) => {
-              const isWatchList = watchList.some(({ slug: watchListSlug }) => slug === watchListSlug);
+            searchResult.map(({ name, symbol, slug }: CryptoCurrency) => {
+              const isWatchList = watchList.some(({ slug: watchListSlug }: CryptoCurrency) => slug === watchListSlug);
               return (
                 <CoinListItem
                   key={slug + "_" + name}
@@ -68,6 +104,8 @@ export default function SearchCryptoList() {
                   removeFromWatchList={removeFromWatchList}
                   isWatchList={isWatchList}
                   refreshCoinPrice={refreshCoinPrice}
+                  onSetSubtitleCoin={handleSetSubtitleCoin}
+                  onAddToMenuBar={handleAddToMenuBar}
                 />
               );
             }) as React.ReactNode

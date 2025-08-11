@@ -5,6 +5,9 @@
   "description": "A price crawler to search crypto price from Coinmarketcap.",
   "icon": "coinmarketcap-icon.png",
   "author": "SonicSpark",
+  "contributors": [
+    "erayack"
+  ],
   "license": "MIT",
   "commands": [
     {
@@ -27,6 +30,54 @@
       "subtitle": "Refresh Crypto List",
       "description": "Refresh existing Crypto List cache from CoinMarketCap",
       "mode": "no-view"
+    },
+    {
+      "name": "price-tracker",
+      "title": "Price Tracker",
+      "subtitle": "Crypto Price",
+      "description": "Displays live crypto price in subtitle",
+      "mode": "no-view",
+      "interval": "5m"
+    },
+    {
+      "name": "crypto-menu-bar",
+      "title": "Crypto Menu Bar",
+      "subtitle": "Live Crypto Prices",
+      "description": "Display live crypto prices in system menu bar. Enable this command in Extension Preferences, then check 'Show in Menu Bar' setting to activate.",
+      "mode": "menu-bar",
+      "interval": "2m",
+      "disabledByDefault": true
+    }
+  ],
+  "preferences": [
+    {
+      "name": "enableMenuBar",
+      "title": "Show in Menu Bar",
+      "description": "Display live crypto prices in the system menu bar",
+      "type": "checkbox",
+      "default": false,
+      "required": false
+    },
+    {
+      "name": "menuBarRefreshInterval",
+      "title": "Menu Bar Refresh Interval",
+      "description": "How often to update menu bar prices",
+      "type": "dropdown",
+      "default": "2m",
+      "data": [
+        {
+          "title": "1 minute",
+          "value": "1m"
+        },
+        {
+          "title": "2 minutes", 
+          "value": "2m"
+        },
+        {
+          "title": "5 minutes",
+          "value": "5m"
+        }
+      ]
     }
   ],
   "dependencies": {

@@ -15,6 +15,8 @@ type CoinListItemProps = {
   removeFromWatchList: (coin: CryptoCurrency) => void;
   refreshCoinPrice: () => void;
   isWatchList: boolean;
+  onSetSubtitleCoin?: (coin: CryptoCurrency) => void;
+  onAddToMenuBar?: (coin: CryptoCurrency) => void;
 };
 
 export default function CoinListItem({
@@ -23,9 +25,11 @@ export default function CoinListItem({
   symbol,
   coinPriceStore,
   addToWatchList,
+  removeFromWatchList,
   refreshCoinPrice,
   isWatchList,
-  removeFromWatchList,
+  onSetSubtitleCoin,
+  onAddToMenuBar,
 }: CoinListItemProps) {
   const coinPrice = coinPriceStore[slug];
   const { push } = useNavigation();
@@ -51,6 +55,8 @@ export default function CoinListItem({
       return parseFloat(coinPrice.currencyPrice.replace(/[$,]/g, ""));
     }
   }, [coinPrice]);
+
+  const coin: CryptoCurrency = { name, slug, symbol };
 
   return (
     <List.Item
@@ -93,12 +99,30 @@ export default function CoinListItem({
             shortcut={{ modifiers: ["cmd", "shift"], key: "w" }}
             onAction={() => {
               if (isWatchList) {
-                removeFromWatchList({ name, slug, symbol });
+                removeFromWatchList(coin);
               } else {
-                addToWatchList({ name, slug, symbol });
+                addToWatchList(coin);
               }
             }}
           />
+
+          {onSetSubtitleCoin && (
+            <Action
+              title="Track in Command Subtitle"
+              icon={Icon.Eye}
+              onAction={() => onSetSubtitleCoin(coin)}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "t" }}
+            />
+          )}
+
+          {onAddToMenuBar && (
+            <Action
+              title="Show in Menu Bar"
+              icon={Icon.AppWindow}
+              onAction={() => onAddToMenuBar(coin)}
+              shortcut={{ modifiers: ["cmd", "shift"], key: "m" }}
+            />
+          )}
 
           {isWatchList && (
             <Action
