@@ -1,26 +1,39 @@
 import { useState, useEffect } from "react";
 import { MenuBarExtra, getPreferenceValues, Icon } from "@raycast/api";
-import { 
-  getMenuBarState, 
-  getCurrentMenuBarCrypto, 
-  setCurrentMenuBarTitle, 
-  MenuBarCrypto 
+import {
+  getMenuBarState,
+  getCurrentMenuBarCrypto,
+  setCurrentMenuBarTitle,
+  MenuBarCrypto,
 } from "./utils/useMenuBarCrypto";
 import { getCoinPriceForSubtitle } from "./utils/useSubtitleCrypto";
 import { formatPrice } from "./utils/priceFormatter";
 import { PriceDirection } from "./types";
 
 interface Preferences {
-  enableMenuBar: boolean;
+  // Raycast returns checkbox values as "true" | "false" strings by default, but
+  // users may also get a typed boolean at runtime (during tests, etc.). Account
+  // for both.
+  enableMenuBar: boolean | string;
   menuBarRefreshInterval: string;
 }
 
 export default function CryptoMenuBar() {
-  const preferences = getPreferenceValues<Preferences>();
-  
-  // If menu bar is disabled in preferences, return empty menu bar
-  if (!preferences.enableMenuBar) {
-    return <MenuBarExtra title="" tooltip="Menu Bar Disabled - Enable in Preferences" />;
+  // Guard preference access to avoid crashing the command when stored data is stale/corrupted.
+  let isMenuBarEnabled = true; // fail-open so the item still renders if preferences are broken
+  try {
+    const preferences = getPreferenceValues<Preferences>();
+    // Raycast persists checkbox preferences as strings. Convert to real boolean so
+    // the feature-flag logic works regardless of the underlying type.
+    isMenuBarEnabled = preferences.enableMenuBar === true || preferences.enableMenuBar === "true";
+  } catch (err) {
+    console.error("Failed to read preferences for CryptoMenuBar, defaulting to enabled:", err);
+  }
+
+  // If the user disabled the menu-bar feature, don’t render anything at all. Returning
+  // null removes the (otherwise empty) clickable area from the macOS menu bar.
+  if (!isMenuBarEnabled) {
+    return null;
   }
 
   const [menuBarCryptos, setMenuBarCryptos] = useState<MenuBarCrypto[]>([]);
@@ -38,16 +51,16 @@ export default function CryptoMenuBar() {
   const loadMenuBarData = async () => {
     try {
       setLoading(true);
-      
+
       // Get menu bar state
       const state = await getMenuBarState();
-      const shownCryptos = state.cryptos.filter(c => c.shown);
+      const shownCryptos = state.cryptos.filter((c) => c.shown);
       setMenuBarCryptos(shownCryptos);
-      
+
       // Get current crypto
       const current = await getCurrentMenuBarCrypto();
       setCurrentCrypto(current);
-      
+
       // If we have a current crypto, fetch its price
       if (current) {
         const priceData = await getCoinPriceForSubtitle(current);
@@ -68,7 +81,7 @@ export default function CryptoMenuBar() {
     try {
       await setCurrentMenuBarTitle(crypto.symbol);
       setCurrentCrypto(crypto);
-      
+
       // Fetch price for the selected crypto
       const priceData = await getCoinPriceForSubtitle(crypto);
       if (priceData) {
@@ -85,10 +98,10 @@ export default function CryptoMenuBar() {
   const getMenuBarTitle = () => {
     if (loading) return "Loading...";
     if (!currentCrypto) return "No Crypto";
-    
+
     const symbol = currentCrypto.symbol.toUpperCase();
     const price = formatPrice(currentPrice);
-    
+
     // Only show symbol and price, no percentage
     return `${symbol} ${price}`;
   };
@@ -97,19 +110,18 @@ export default function CryptoMenuBar() {
   const getMenuBarIcon = () => {
     if (currentDirection === PriceDirection.UP) {
       return { source: Icon.ArrowUp, tintColor: "#00FF00" };
-    } else if (currentDirection === PriceDirection.DOWN) {
+    }
+
+    if (currentDirection === PriceDirection.DOWN) {
       return { source: Icon.ArrowDown, tintColor: "#FF0000" };
     }
-    
-    return { source: Icon.Coins };
+
+    // For the neutral state just return the icon constant directly (object form causes a blank icon)
+    return Icon.Coins;
   };
 
   return (
-    <MenuBarExtra 
-      title={getMenuBarTitle()} 
-      icon={getMenuBarIcon()}
-      tooltip="Crypto Prices"
-    >
+    <MenuBarExtra title={getMenuBarTitle()} icon={getMenuBarIcon()} tooltip="Crypto Prices">
       {menuBarCryptos.length === 0 ? (
         <>
           <MenuBarExtra.Item
@@ -137,28 +149,29 @@ export default function CryptoMenuBar() {
               />
             ))}
           </MenuBarExtra.Section>
-          
+
           <MenuBarExtra.Separator />
-          
+
           {currentCrypto && (
             <MenuBarExtra.Section title="Current Price">
               <MenuBarExtra.Item
                 title={`${currentCrypto.name} (${currentCrypto.symbol.toUpperCase()})`}
                 subtitle={`${currentPrice} ${currentChange ? currentChange : ""}`}
-                icon={currentDirection === PriceDirection.UP ? 
-                  { source: Icon.ArrowUp, tintColor: "#00FF00" } : 
-                  currentDirection === PriceDirection.DOWN ? 
-                  { source: Icon.ArrowDown, tintColor: "#FF0000" } : 
-                  Icon.Coins
+                icon={
+                  currentDirection === PriceDirection.UP
+                    ? { source: Icon.ArrowUp, tintColor: "#00FF00" }
+                    : currentDirection === PriceDirection.DOWN
+                      ? { source: Icon.ArrowDown, tintColor: "#FF0000" }
+                      : Icon.Coins
                 }
               />
             </MenuBarExtra.Section>
           )}
         </>
       )}
-      
+
       <MenuBarExtra.Separator />
-      
+
       <MenuBarExtra.Item
         title="Refresh Prices"
         icon={Icon.ArrowClockwise}

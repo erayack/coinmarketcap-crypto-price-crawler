@@ -20,7 +20,7 @@ export function formatPriceSubtitle(coin: SelectedCoinForSubtitle, priceData: Co
   // Use the direction information from the API (like the extension does)
   let directionSymbol = "";
   let trendIndicator = "";
-  
+
   if (direction) {
     // Match the extension's approach: + for UP, - for DOWN
     directionSymbol = direction === PriceDirection.UP ? "+" : "-";
@@ -38,11 +38,12 @@ export function formatPriceSubtitle(coin: SelectedCoinForSubtitle, priceData: Co
 
   // Format like the extension: "BTC $42,500 📈 +2.5%"
   const formattedChange = changePercent24h.includes("%") ? changePercent24h : `${changePercent24h}%`;
-  
+
   // Ensure we have a proper + or - prefix
-  const prefixedChange = formattedChange.startsWith('+') || formattedChange.startsWith('-') 
-    ? formattedChange 
-    : `${directionSymbol}${formattedChange}`;
+  const prefixedChange =
+    formattedChange.startsWith("+") || formattedChange.startsWith("-")
+      ? formattedChange
+      : `${directionSymbol}${formattedChange}`;
 
   return `${uppercaseSymbol} ${formattedPrice} ${trendIndicator} ${prefixedChange}`;
 }

@@ -39,10 +39,10 @@ export async function getMenuBarState(): Promise<MenuBarState> {
 export async function addToMenuBar(coin: CryptoCurrency): Promise<void> {
   try {
     const state = await getMenuBarState();
-    
+
     // Check if crypto already exists
-    const existingIndex = state.cryptos.findIndex(c => c.slug === coin.slug);
-    
+    const existingIndex = state.cryptos.findIndex((c) => c.slug === coin.slug);
+
     if (existingIndex >= 0) {
       // Update existing crypto to show in menu bar
       state.cryptos[existingIndex].shown = true;
@@ -55,7 +55,7 @@ export async function addToMenuBar(coin: CryptoCurrency): Promise<void> {
     }
 
     await LocalStorage.setItem(MENUBAR_CRYPTOS_KEY, JSON.stringify(state.cryptos));
-    
+
     // If no current title is set, set this as the current title
     if (!state.currentTitle) {
       await setCurrentMenuBarTitle(coin.symbol.toUpperCase());
@@ -72,18 +72,18 @@ export async function addToMenuBar(coin: CryptoCurrency): Promise<void> {
 export async function removeFromMenuBar(slug: string): Promise<void> {
   try {
     const state = await getMenuBarState();
-    const cryptoIndex = state.cryptos.findIndex(c => c.slug === slug);
-    
+    const cryptoIndex = state.cryptos.findIndex((c) => c.slug === slug);
+
     if (cryptoIndex >= 0) {
       state.cryptos[cryptoIndex].shown = false;
     }
 
     await LocalStorage.setItem(MENUBAR_CRYPTOS_KEY, JSON.stringify(state.cryptos));
-    
+
     // If this was the current title, find another one or clear it
-    const currentCrypto = state.cryptos.find(c => c.symbol.toUpperCase() === state.currentTitle);
+    const currentCrypto = state.cryptos.find((c) => c.symbol.toUpperCase() === state.currentTitle);
     if (currentCrypto && currentCrypto.slug === slug) {
-      const nextCrypto = state.cryptos.find(c => c.shown && c.slug !== slug);
+      const nextCrypto = state.cryptos.find((c) => c.shown && c.slug !== slug);
       if (nextCrypto) {
         await setCurrentMenuBarTitle(nextCrypto.symbol.toUpperCase());
       } else {
@@ -114,7 +114,7 @@ export async function setCurrentMenuBarTitle(symbol: string): Promise<void> {
 export async function getMenuBarCryptos(): Promise<MenuBarCrypto[]> {
   try {
     const state = await getMenuBarState();
-    return state.cryptos.filter(c => c.shown);
+    return state.cryptos.filter((c) => c.shown);
   } catch (error) {
     console.error("Error getting menu bar cryptos:", error);
     return [];
@@ -128,10 +128,8 @@ export async function getCurrentMenuBarCrypto(): Promise<MenuBarCrypto | null> {
   try {
     const state = await getMenuBarState();
     if (!state.currentTitle) return null;
-    
-    return state.cryptos.find(c => 
-      c.symbol.toUpperCase() === state.currentTitle && c.shown
-    ) || null;
+
+    return state.cryptos.find((c) => c.symbol.toUpperCase() === state.currentTitle && c.shown) || null;
   } catch (error) {
     console.error("Error getting current menu bar crypto:", error);
     return null;

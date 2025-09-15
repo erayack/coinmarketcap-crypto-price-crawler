@@ -51,7 +51,7 @@
   "preferences": [
     {
       "name": "enableMenuBar",
-      "title": "Show in Menu Bar",
+      "label": "Show in Menu Bar",
       "description": "Display live crypto prices in the system menu bar",
       "type": "checkbox",
       "default": false,
@@ -76,7 +76,8 @@
           "title": "5 minutes",
           "value": "5m"
         }
-      ]
+      ],
+      "required": false
     }
   ],
   "dependencies": {
